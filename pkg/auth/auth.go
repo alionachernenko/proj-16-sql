@@ -1,15 +1,17 @@
-package main
+package auth
 
 import (
-	"github.com/rs/zerolog/log"
 	"net/http"
+	"tasks/internal/database"
+
+	"github.com/rs/zerolog/log"
 )
 
 type Auth struct {
-	Storage *Storage
+	S *database.PostgresStorage
 }
 
-func (a *Auth) checkAuth(next http.HandlerFunc) http.HandlerFunc {
+func (a *Auth) CheckAuth(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		username, password, ok := r.BasicAuth()
 
@@ -18,7 +20,7 @@ func (a *Auth) checkAuth(next http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
-		user, err := a.Storage.GetUser(username)
+		user, err := a.S.GetUser(username)
 
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to retrieve user from database")

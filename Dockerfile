@@ -1,6 +1,6 @@
 FROM golang:1.22
 
-WORKDIR /bin
+WORKDIR /app
 
 COPY go.mod go.sum ./
 
@@ -8,6 +8,8 @@ RUN go mod download
 
 COPY . .
 
-RUN go build -o api .
+WORKDIR /app/cmd/app
 
-CMD ["/bin/api"]
+RUN go build -o /app/tasks .
+
+CMD ["/app/tasks"]
